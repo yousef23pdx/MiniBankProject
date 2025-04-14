@@ -12,7 +12,6 @@ class UsersService(
 
     private val usersRepository: UsersRepository,
 
-
     ) {
 
     fun registerUser(request: UserRequest): UserResponse {

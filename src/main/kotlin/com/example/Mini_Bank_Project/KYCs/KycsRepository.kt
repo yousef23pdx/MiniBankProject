@@ -1,9 +1,9 @@
 package com.example.Mini_Bank_Project.KYCs
 
 import com.example.Mini_Bank_Project.Users.UserEntity
-import jakarta.inject.Named
 import jakarta.persistence.*
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.stereotype.Repository
 import java.math.BigDecimal
 import java.time.LocalDate
 
@@ -13,7 +13,7 @@ interface KycRepository : JpaRepository<KycEntity, Long> {
 
 
 
-@Named
+@Repository
 @Entity
 @Table(name = "KYCs")
 data class KycEntity(
