@@ -1,8 +1,8 @@
 package com.example.Mini_Bank_Project.Users
 
-import com.example.Mini_Bank_Project.Accounts.DTO.LoginRequest
-import com.example.Mini_Bank_Project.Accounts.DTO.UserRequest
-import com.example.Mini_Bank_Project.Accounts.DTO.UserResponse
+import com.example.Mini_Bank_Project.DTO.LoginRequest
+import com.example.Mini_Bank_Project.DTO.UserRequest
+import com.example.Mini_Bank_Project.DTO.UserResponse
 import jakarta.inject.Named
 import org.springframework.stereotype.Service
 

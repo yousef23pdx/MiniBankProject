@@ -1,4 +1,4 @@
-package com.example.Mini_Bank_Project.Accounts.DTO
+package com.example.Mini_Bank_Project.DTO
 
 data class UserRequest(
 

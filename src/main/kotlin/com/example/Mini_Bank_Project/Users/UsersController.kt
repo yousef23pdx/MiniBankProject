@@ -1,7 +1,7 @@
 package com.example.Mini_Bank_Project.Users
 
-import com.example.Mini_Bank_Project.Accounts.DTO.UserRequest
-import com.example.Mini_Bank_Project.Accounts.DTO.UserResponse
+import com.example.Mini_Bank_Project.DTO.UserRequest
+import com.example.Mini_Bank_Project.DTO.UserResponse
 import org.springframework.web.bind.annotation.*
 import org.springframework.http.ResponseEntity
 
