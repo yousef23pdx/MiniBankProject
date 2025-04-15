@@ -2,7 +2,10 @@ package com.example.Mini_Bank_Project.Accounts
 
 import com.example.Mini_Bank_Project.DTO.*
 import com.example.Mini_Bank_Project.Transactions.*
+import com.example.Mini_Bank_Project.TransferFundsException
 import com.example.Mini_Bank_Project.Users.UsersRepository
+import jakarta.transaction.Transactional
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.util.*
@@ -12,13 +15,14 @@ import java.util.*
 class AccountsService(
     private val accountsRepository: AccountRepository,
     private val usersRepository: UsersRepository,
-    private val transactionRepository: TransactionRepository
+    private val transactionRepository: TransactionRepository,
+
 ){
 
     fun createAccount(request: AccountRequest): AccountResponse {
         // Find the user by ID
         val user = usersRepository.findById(request.userId)
-            .orElseThrow { RuntimeException("User not found") }
+            .orElseThrow { TransferFundsException("User not found") }
 
         // Generate a basic unique account number
         val accountNumber = UUID.randomUUID().toString()
@@ -28,7 +32,8 @@ class AccountsService(
             user = user,
             balance = request.initialBalance,
             isActive = true,
-            accountNumber = accountNumber
+            accountNumber = accountNumber,
+            name = request.name
         )
 
         // Save the account
@@ -40,7 +45,8 @@ class AccountsService(
             userId = saved.user.id!!,
             balance = saved.balance,
             accountNumber = saved.accountNumber,
-            isActive = saved.isActive
+            isActive = saved.isActive,
+            name = request.name
         )
     }
 
@@ -51,7 +57,8 @@ class AccountsService(
                 userId = account.user.id!!,
                 balance = account.balance,
                 accountNumber = account.accountNumber,
-                isActive = account.isActive
+                isActive = account.isActive,
+                name = account.name
             )
         }
     }
@@ -59,32 +66,37 @@ class AccountsService(
     fun closeAccount(accountNumber: String) {
         val account = accountsRepository.findAll()
             .firstOrNull { it.accountNumber == accountNumber }
-            ?: throw RuntimeException("Account not found")
+            ?: throw TransferFundsException("Account not found")
 
-        if (!account.isActive) throw RuntimeException("Account already closed")
+        if (!account.isActive) throw TransferFundsException("Account already closed")
 
         account.isActive = false
         accountsRepository.save(account)
     }
 
-    fun transferFunds(request: TransactionRequest): String {
+    @Transactional
+    fun transferFunds(request: TransactionRequest): BigDecimal {
         val source = accountsRepository.findByAccountNumber(request.sourceAccount)
         val destination = accountsRepository.findByAccountNumber(request.destinationAccount)
 
         if (source == null || destination == null) {
-            return "Source or destination account not found"
+            throw TransferFundsException("Source or destination account not found")
         }
 
         if (!source.isActive || !destination.isActive) {
-            return "One or both accounts are inactive"
+             throw TransferFundsException("One or both accounts are inactive")
         }
 
         if (source.balance < request.amount) {
-            return "Insufficient balance in source account"
+            throw TransferFundsException("Insufficient balance in source account")
         }
 
         if (request.amount <= BigDecimal.ZERO) {
-            return "Amount must be greater than zero."
+            throw TransferFundsException("Amount must be greater than zero.")
+        }
+
+        if (request.sourceAccount == request.destinationAccount) {
+            throw TransferFundsException("You cannot transfer to the same account.")
         }
 
         // Perform the transfer
@@ -103,10 +115,7 @@ class AccountsService(
         )
         transactionRepository.save(transaction)
 
-        return "Transfer successful. New source balance: ${source.balance}"
+        return source.balance
     }
 
-
 }
-
-

@@ -34,7 +34,12 @@ data class AccountEntity(
     var isActive: Boolean = true,
 
     @Column(nullable = false, unique = true)
-    var accountNumber: String = ""
+    var accountNumber: String = "",
+
+    @Column(nullable = false)
+    var name: String = ""
+
+
 ) {
-    constructor() : this(null, UserEntity(), BigDecimal.ZERO, true, "")
+    constructor() : this(null, UserEntity(), BigDecimal.ZERO, true, "","")
 }

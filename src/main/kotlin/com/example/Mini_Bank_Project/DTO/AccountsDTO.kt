@@ -5,7 +5,8 @@ import java.math.BigDecimal
 
 data class AccountRequest(
     val userId: Long,
-    val initialBalance: BigDecimal
+    val initialBalance: BigDecimal,
+    val name: String
 )
 
 data class AccountResponse(
@@ -13,5 +14,6 @@ data class AccountResponse(
     val userId: Long,
     val balance: BigDecimal,
     val isActive: Boolean,
-    val accountNumber: String
+    val accountNumber: String,
+    val name: String
 )

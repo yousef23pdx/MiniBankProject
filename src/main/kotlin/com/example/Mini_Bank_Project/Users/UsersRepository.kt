@@ -18,9 +18,6 @@ data class UserEntity(
     var username: String,
     var passkey: String
 
-//    @OneToMany(mappedBy = "user")
-//val accounts: List<AccountEntity>? = null
-
 ) {
     constructor(): this(null,"","")
 }

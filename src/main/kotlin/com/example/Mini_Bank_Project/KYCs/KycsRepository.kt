@@ -25,9 +25,9 @@ data class KycEntity(
     @JoinColumn(name = "user_id", unique = true)
     val user: UserEntity,
 
-    val dateOfBirth: LocalDate,
-    val nationality: String,
-    val salary: BigDecimal
+    var dateOfBirth: LocalDate,
+    var nationality: String,
+    var salary: BigDecimal
 ) {
     constructor() : this(null, UserEntity(), LocalDate.now(), "", BigDecimal.ZERO)
 }
