@@ -4,6 +4,7 @@ import com.example.Mini_Bank_Project.DTO.*
 import com.example.Mini_Bank_Project.Transactions.*
 import com.example.Mini_Bank_Project.Users.UsersRepository
 import org.springframework.stereotype.Service
+import java.math.BigDecimal
 import java.util.*
 
 
@@ -80,6 +81,10 @@ class AccountsService(
 
         if (source.balance < request.amount) {
             return "Insufficient balance in source account"
+        }
+
+        if (request.amount <= BigDecimal.ZERO) {
+            return "Amount must be greater than zero."
         }
 
         // Perform the transfer
