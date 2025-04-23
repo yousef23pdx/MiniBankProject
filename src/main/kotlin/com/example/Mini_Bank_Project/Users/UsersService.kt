@@ -5,6 +5,8 @@ import com.example.Mini_Bank_Project.DTO.UserResponse
 import com.example.Mini_Bank_Project.TransferFundsException
 import jakarta.inject.Named
 import org.springframework.stereotype.Service
+import org.springframework.security.crypto.password.PasswordEncoder
+
 
 const val USERNAME_MIN_LENGTH = 4
 const val USERNAME_MAX_LENGTH = 30
@@ -15,25 +17,39 @@ const val PASSKEY_MAX_LENGTH = 30
 @Service
 class UsersService(
     private val usersRepository: UsersRepository,
+    private val passwordEncoder: PasswordEncoder
 ) {
 
-  fun registerUser(request: UserRequest): UserResponse {
+    fun registerUser(request: UserRequest): UserResponse {
 
-    if (request.username.length < USERNAME_MIN_LENGTH ||
-        request.username.length > USERNAME_MAX_LENGTH) {
-      throw TransferFundsException(
-          "Username must be between ${USERNAME_MIN_LENGTH} and ${USERNAME_MAX_LENGTH} characters")
+        if (request.username.length < USERNAME_MIN_LENGTH ||
+            request.username.length > USERNAME_MAX_LENGTH) {
+            throw TransferFundsException(
+                "Username must be between ${USERNAME_MIN_LENGTH} and ${USERNAME_MAX_LENGTH} characters")
+        }
+
+        if (request.passkey.length < PASSKEY_MIN_LENGTH ||
+            request.passkey.length > PASSKEY_MAX_LENGTH) {
+            throw TransferFundsException(
+                "Password must be between ${PASSKEY_MIN_LENGTH} and ${PASSKEY_MAX_LENGTH} characters")
+        }
+
+        val createUser = UserEntity(
+            username = request.username,
+            passkey = passwordEncoder.encode(request.passkey),
+        )
+
+        val savedUser = usersRepository.save(createUser)
+        return UserResponse(id = savedUser.id!!, username = savedUser.username)
     }
 
-    if (request.passkey.length < PASSKEY_MIN_LENGTH ||
-        request.passkey.length > PASSKEY_MAX_LENGTH) {
-      throw TransferFundsException(
-          "Password must be between ${PASSKEY_MIN_LENGTH} and ${PASSKEY_MAX_LENGTH} characters")
+    fun listUsers(): List<UserRequest> = usersRepository.findAll().map {
+        UserRequest(
+            username = it.username,
+            passkey = it.passkey
+
+        )
     }
 
-    val createUser = UserEntity(username = request.username, passkey = request.passkey)
-    val savedUser = usersRepository.save(createUser)
 
-    return UserResponse(id = savedUser.id!!, username = savedUser.username)
-  }
 }

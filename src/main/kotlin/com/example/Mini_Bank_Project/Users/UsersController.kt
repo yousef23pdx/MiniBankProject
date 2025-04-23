@@ -17,5 +17,9 @@ class UsersController(private val usersService: UsersService) {
       ResponseEntity.ok(newUser)
     } catch (e: TransferFundsException) {
       ResponseEntity.badRequest().body(mapOf("error" to e.message))        }
-    }
+  }
+
+  @GetMapping("/v1/list")
+  fun users() = usersService.listUsers()
+
   }
