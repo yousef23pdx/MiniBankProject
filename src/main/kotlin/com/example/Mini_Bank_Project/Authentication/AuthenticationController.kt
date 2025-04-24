@@ -15,7 +15,7 @@ class AuthenticationController(
 
     @PostMapping("/login")
     fun login(@RequestBody authRequest: AuthenticationRequest): AuthenticationResponse {
-        val authToken = UsernamePasswordAuthenticationToken(authRequest.username, authRequest.passkey)
+        val authToken = UsernamePasswordAuthenticationToken(authRequest.username, authRequest.password)
         val authentication = authenticationManager.authenticate(authToken)
 
         if (authentication.isAuthenticated) {
@@ -30,7 +30,7 @@ class AuthenticationController(
 
 data class AuthenticationRequest(
     val username: String,
-    val passkey: String
+    val password: String
 )
 
 data class AuthenticationResponse(

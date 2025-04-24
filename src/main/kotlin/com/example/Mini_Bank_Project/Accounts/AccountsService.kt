@@ -20,9 +20,16 @@ class AccountsService(
 ){
 
     fun createAccount(request: AccountRequest): AccountResponse {
+
         // Find the user by ID
         val user = usersRepository.findById(request.userId)
             .orElseThrow { TransferFundsException("User not found") }
+
+        // Check if user already has 5 accounts
+        val existingAccounts = accountsRepository.findByUserId(user.id!!)
+        if (existingAccounts.size >= 5) {
+            throw TransferFundsException("User cannot have more than 5 accounts.")
+        }
 
         // Generate a basic unique account number
         val accountNumber = UUID.randomUUID().toString()
